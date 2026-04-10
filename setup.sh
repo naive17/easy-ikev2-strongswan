@@ -31,31 +31,22 @@ SERVER_IP=$(hostname -I | awk '{print $1}')
 
 if [ -z "$SERVER_IP" ]; then
   echo "Could not auto-detect IP. Please enter it manually:"
-  read -r SERVER_IP
+  read -r SERVER_IP < /dev/tty
 else
   echo "Detected IP: $SERVER_IP"
-  read -rp "Is this correct? [Y/n]: " confirm
+  read -rp "Is this correct? [Y/n]: " confirm < /dev/tty
   if [[ "$confirm" =~ ^[Nn]$ ]]; then
-    read -rp "Enter server IP: " SERVER_IP
+    read -rp "Enter server IP: " SERVER_IP < /dev/tty
   fi
 fi
 
 # Ask for credentials
-read -rp "Enter VPN username [myuser]: " VPN_USER
+read -rp "Enter VPN username [myuser]: " VPN_USER < /dev/tty
 VPN_USER=${VPN_USER:-myuser}
 
-while true; do
-  read -rsp "Enter VPN password [mypassword]: " VPN_PASSWORD
-  echo
-  VPN_PASSWORD=${VPN_PASSWORD:-mypassword}
-  read -rsp "Confirm VPN password [mypassword]: " VPN_PASSWORD_CONFIRM
-  echo
-  VPN_PASSWORD_CONFIRM=${VPN_PASSWORD_CONFIRM:-mypassword}
-  if [ "$VPN_PASSWORD" = "$VPN_PASSWORD_CONFIRM" ]; then
-    break
-  fi
-  echo "Passwords do not match, try again."
-done
+read -rsp "Enter VPN password [mypassword]: " VPN_PASSWORD < /dev/tty
+echo
+VPN_PASSWORD=${VPN_PASSWORD:-mypassword}
 
 # Generate random PSK
 VPN_PSK=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | head -c 24)
