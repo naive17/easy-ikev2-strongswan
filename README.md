@@ -20,7 +20,7 @@ A very tiny Hetzner VPS will do it, like the smallest one available.
 ## Install
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/naive17/easy-ikev2-strongswan/main/setup.sh | sudo bash
+curl -fsSL https://raw.githubusercontent.com/naive17/easy-ikev2-strongswan/main/setup.sh -o setup.sh && sudo bash setup.sh
 ```
 
 Or inspect first:
