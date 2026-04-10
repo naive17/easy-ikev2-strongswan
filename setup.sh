@@ -111,16 +111,18 @@ $VPN_USER : EAP "$VPN_PASSWORD"
 $VPN_USER : XAUTH "$VPN_PASSWORD"
 EOF
 
+# Firewall
 if command -v ufw &> /dev/null; then
-  ufw allow 500/udp  comment 'IKEv2 VPN' > /dev/null
-  ufw allow 4500/udp comment 'IKEv2 VPN NAT-T' > /dev/null
-  info "ufw rules added."
+  ufw allow 500/udp  comment 'IKEv2 VPN' > /dev/null || true
+  ufw allow 4500/udp comment 'IKEv2 VPN NAT-T' > /dev/null || true
+  echo "ufw rules added."
 else
-  info "ufw not found — adding iptables rules..."
+  echo "ufw not found — adding iptables rules..."
   iptables -A INPUT -p udp --dport 500  -j ACCEPT
   iptables -A INPUT -p udp --dport 4500 -j ACCEPT
-  warn "iptables rules are not persistent across reboots. Consider installing iptables-persistent."
+  echo "Warning: iptables rules are not persistent across reboots. Consider installing iptables-persistent."
 fi
+
 # Stop and remove existing container if any
 docker stop strongswan 2>/dev/null || true
 docker rm strongswan 2>/dev/null || true
