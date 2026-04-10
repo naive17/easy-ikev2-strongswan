@@ -2,9 +2,9 @@
 
 set -e
 
-# Check if running as root
+# Check if running as root or sudo
 if [ "$EUID" -ne 0 ]; then
-  echo "Please run as root"
+  echo "Please run with sudo: sudo bash vpn-setup.sh"
   exit 1
 fi
 
@@ -12,8 +12,12 @@ fi
 if ! command -v docker &> /dev/null; then
   echo "Docker not found. Installing Docker..."
   curl -fsSL https://get.docker.com | sh
-  systemctl enable docker
-  systemctl start docker
+  if command -v systemctl &> /dev/null; then
+    systemctl enable docker
+    systemctl start docker
+  elif command -v service &> /dev/null; then
+    service docker start
+  fi
 fi
 
 # Auto-detect public IP
@@ -139,7 +143,8 @@ echo ""
 echo "================================================"
 echo " IKEv2 VPN server is ready!"
 echo "------------------------------------------------"
-echo " Server IP : $SERVER_IP"
-echo " Username  : $VPN_USER"
-echo " Password  : $VPN_PASSWORD"
+echo " Server IP  : $SERVER_IP"
+echo " Remote ID  : $SERVER_IP"
+echo " Username   : $VPN_USER"
+echo " Password   : $VPN_PASSWORD"
 echo "================================================"
